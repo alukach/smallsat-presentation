@@ -1,0 +1,35 @@
+.container {
+  display: flex;
+}
+.col {
+  flex: 1;
+}
+
+pre {
+  /* Make tabs appear as double-spaces */
+  tab-size: 2;
+}
+
+div.slides {
+  /* https://stackoverflow.com/questions/19026884/flexbox-center-horizontally-and-vertically */
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+section.padded {
+  align-items: center;
+
+  width: 80% !important;
+}
+
+/* Make code example smaller */
+pre.dense {
+  font-size: 0.35em !important;
+}

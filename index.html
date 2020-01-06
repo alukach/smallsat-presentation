@@ -1,49 +1,535 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
 
-		<title>reveal.js</title>
+    <title>reveal.js</title>
 
-		<link rel="stylesheet" href="css/reset.css">
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/reveal.css" />
+    <link rel="stylesheet" href="css/theme/utils.css" />
+    <link rel="stylesheet" href="css/theme/devseed.css" />
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/monokai.css">
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/monokai.css" />
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
-		</div>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.type = "text/css";
+      link.href = window.location.search.match(/print-pdf/gi)
+        ? "css/print/pdf.css"
+        : "css/print/paper.css";
+      document.getElementsByTagName("head")[0].appendChild(link);
+    </script>
+    <style>
+      .line {
+        display: block;
+      }
+      .line.focus {
+        background: rgba(255, 255, 255, 0.3);
+      }
 
-		<script src="js/reveal.js"></script>
+      .reveal .slides section .fragment.current-only {
+        opacity: 1;
+        visibility: visible;
+        display: none;
+      }
+      .reveal .slides section .fragment.current-only.current-fragment {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section
+          data-background-image="assets/satellite-bw.jpg"
+          class="bg-50 padded"
+        >
+          <h2>Building a cloud-native satellite imagery pipeline</h2>
+          <hr />
+          <p class="small">OSGeo Calgary - Jan 2020</p>
+        </section>
 
-		<script>
-			// More info about config & dependencies:
-			// - https://github.com/hakimel/reveal.js#configuration
-			// - https://github.com/hakimel/reveal.js#dependencies
-			Reveal.initialize({
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true }
-				]
-			});
-		</script>
-	</body>
+        <section>
+          <h2>An Intro</h2>
+          <p>Anthony Lukach</p>
+          <p>Geographer -> Cloud Engineer ☁️🔧</p>
+        </section>
+
+        <section>
+          <img src="assets/ds-logo.png" alt="" />
+          <p>Anthony Lukach</p>
+          <p>Geographer -> Cloud Engineer ☁️🔧</p>
+        </section>
+
+        <section>
+          <h2>General Workflow</h2>
+          <ol>
+            <li>Foo</li>
+            <li class="fragment">Bar</li>
+            <li class="fragment">Asdf</li>
+            <li class="fragment">qwert</li>
+          </ol>
+
+          <aside class="notes">
+            This slide has fragments which are also stepped through in the notes
+            window.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Anatomy of a Planet Order</h2>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+            ### Dependencies
+
+            ```js
+            Reveal.initialize({
+              // Include other options…
+              dependencies: [
+                // Include other dependencies…
+                { src: 'path/to/highlight.js' },
+                {
+                  src: 'node_modules/reveal-code-focus/reveal-code-focus.js',
+                  async: true,
+                  callback: function() {
+                    RevealCodeFocus();
+                  }
+                }
+              ]
+            });
+            ```
+            <span class="fragment" data-code-focus="5">Note that the `highlight.js` file mentioned is not the [Reveal.js plugin](https://github.com/hakimel/reveal.js/blob/master/plugin/highlight/highlight.js), but the actual [`highlight.js` library](https://highlightjs.org/).</span>
+          </script>
+        </section>
+
+        <section data-state="yellow-slide" data-markdown>
+          <script type="text/template">
+            ### Styling
+
+            ```css
+            .line { display: block; }
+            .line.focus { background: yellow; }
+            /* include a highlight.js theme and modify it */
+            /* … */
+            /* on focused: switch to solarized light */
+            .line.focus { background: #fdf6e3; color: #657b83; }
+            .line.focus .hljs-comment, .line.focus .hljs-quote { color: #93a1a1; }
+            /* … */
+            ```
+            <span class="fragment current-only" data-code-focus="1">The most important style is to ensure that lines are set to `display: block`, so that different lines will not be rendered on the same line.</span>
+            <span class="fragment current-only" data-code-focus="2">To style your code you might first want to set a different background or text colour when highlighted.</span>
+            <span class="fragment current-only" data-code-focus="3-4">You can also use a specific theme by default…</span>
+            <span class="fragment current-only" data-code-focus="5-8">…then switch to a different one when lines are focused on.</span>
+          </script>
+        </section>
+
+        <section class="padded" data-markdown>
+          <script type="text/template">
+            #### Anatomy of a Planet delivery
+
+            ```text
+            s3://my-ingestion-bucket
+            └─ inbox/
+               └─ planet/
+                  ├─ 002880ef-82ca-4abd-8a0b-195b64e20cc4/
+                  │  ├─ 1
+                  │  │  ├─ files
+                  │  │  │  └─ SkySatCollect
+                  │  │  │     └─ 20190926_154340_ssc1_u0002
+                  │  │  │        ├─ all
+                  │  │  │        │  ├─ 20190926_154340_ssc1_u0002_analytic.tif
+                  │  │  │        │  ├─ 20190926_154340_ssc1_u0002_analytic_dn.tif
+                  │  │  │        │  ├─ 20190926_154340_ssc1_u0002_analytic_udm.tif
+                  │  │  │        │  ├─ 20190926_154340_ssc1_u0002_ortho_panchromatic.tif
+                  │  │  │        │  └─ 20190926_154340_ssc1_u0002_panchromatic_dn.tif
+                  │  │  │        └─ 20190926_154340_ssc1_u0002_metadata.json
+                  │  │  └─ manifest.json
+                  │  └─ 2
+                  └─ 00402a81-0165-443d-ba02-3eda9f83a997
+            ```
+            <span class="fragment current-only" data-code-focus="1">Our bucket</span>
+            <span class="fragment current-only" data-code-focus="2">`inbox/` prefix is where we'll watch for new `manifest.json` files</span>
+            <span class="fragment current-only" data-code-focus="3">`planet/` prefix is for future-proofing for new providers</span>
+            <span class="fragment current-only" data-code-focus="4,18">Random GUID representing Planet Order ID</span>
+            <span class="fragment current-only" data-code-focus="5,17">Order split into numerous parts</span>
+            <span class="fragment current-only" data-code-focus="7">Planet `item_type`</span>
+            <span class="fragment current-only" data-code-focus="8">Planet `item_id`</span>
+            <span class="fragment current-only" data-code-focus="16">Delivery manifest</span>
+            <span class="fragment current-only" data-code-focus="15">Metadata about scene</span>
+            <span class="fragment current-only" data-code-focus="10-14">Delivered assets</span>
+          </script>
+        </section>
+
+        <section class="padded" data-markdown>
+          <script type="text/template">
+            #### Example `manifest.json`
+
+            ```
+            {
+              "name": "Example order",
+              "files": [
+                {
+                  "path": "files/SkySatCollect/20190928_161510_ss01_u0003/20190928_161510_ss01_u0003_metadata.json",
+                  "media_type": "application/json",
+                  "size": 6842,
+                  "digests": {
+                    "md5": "8ec8adc9bfa29694e6211eee1051e1b7",
+                    "sha256": "761b809bdca37dc8141cb6e76267b9850b0e7dfb1ca3a3a342d5d9b0d3cfbfe9"
+                  },
+                  "annotations": {
+                    "planet/item_id": "20190928_161510_ss01_u0003",
+                    "planet/item_type": "SkySatCollect"
+                  }
+                },
+                {
+                  "path": "files/SkySatCollect/20190928_161510_ss01_u0003/all/20190928_161510_ss01_u0003_analytic.tif",
+                  "media_type": "image/tiff",
+                  "size": 1859375566,
+                  "digests": {
+                    "md5": "a49d49bf6bc9d08e27cde7be5fd45272",
+                    "sha256": "6c6485d7e09fbc4a91a4f5daa2023bd42bcaf9027cd4414d7e6d1d029636cda1"
+                  },
+                  "annotations": {
+                    "planet/asset_type": "ortho_analytic",
+                    "planet/bundle_type": "all",
+                    "planet/item_id": "20190928_161510_ss01_u0003",
+                    "planet/item_type": "SkySatCollect"
+                  }
+                },
+                {
+                  "path": "files/SkySatCollect/20190928_161510_ss01_u0003/all/20190928_161510_ss01_u0003_analytic_dn.tif",
+                  "media_type": "image/tiff",
+                  "size": 1281864097,
+                  "digests": {
+                    "md5": "976d070087027410dcf3c461d313ce1e",
+                    "sha256": "438bd93ed2c5e703e7dbda13f2dc02ffdcf07bf40d07359b5b0f477fcd00e2e0"
+                  },
+                  "annotations": {
+                    "planet/asset_type": "ortho_analytic_dn",
+                    "planet/bundle_type": "all",
+                    "planet/item_id": "20190928_161510_ss01_u0003",
+                    "planet/item_type": "SkySatCollect"
+                  }
+                },
+                {
+                  "path": "files/SkySatCollect/20190928_161510_ss01_u0003/all/20190928_161510_ss01_u0003_analytic_udm.tif",
+                  "media_type": "image/tiff",
+                  "size": 2285806,
+                  "digests": {
+                    "md5": "6632292e2d59216e0d0101b0a913e8fc",
+                    "sha256": "0fda62d8cccfb00178fae244b14d51725ec49877cdf40982432adc5cfb9d189a"
+                  },
+                  "annotations": {
+                    "planet/asset_type": "ortho_analytic_udm",
+                    "planet/bundle_type": "all",
+                    "planet/item_id": "20190928_161510_ss01_u0003",
+                    "planet/item_type": "SkySatCollect"
+                  }
+                },
+                {
+                  "path": "files/SkySatCollect/20190928_161510_ss01_u0003/all/20190928_161510_ss01_u0003_ortho_panchromatic.tif",
+                  "media_type": "image/tiff",
+                  "size": 507692041,
+                  "digests": {
+                    "md5": "f020dbddfe3b9f6abe95573178f518cb",
+                    "sha256": "93e18f2a0268ca3afbaa1b2580a4ed8e49af42ab59f1bf14cdb19a4a722f4eea"
+                  },
+                  "annotations": {
+                    "planet/asset_type": "ortho_panchromatic",
+                    "planet/bundle_type": "all",
+                    "planet/item_id": "20190928_161510_ss01_u0003",
+                    "planet/item_type": "SkySatCollect"
+                  }
+                },
+                {
+                  "path": "files/SkySatCollect/20190928_161510_ss01_u0003/all/20190928_161510_ss01_u0003_panchromatic_dn.tif",
+                  "media_type": "image/tiff",
+                  "size": 680020861,
+                  "digests": {
+                    "md5": "e216572f0daf915cfe3a41fa9034a1da",
+                    "sha256": "715bae3d648925a7c621b389bbc779e05585a4a8230601fe42895efe870662dd"
+                  },
+                  "annotations": {
+                    "planet/asset_type": "ortho_panchromatic_dn",
+                    "planet/bundle_type": "all",
+                    "planet/item_id": "20190928_161510_ss01_u0003",
+                    "planet/item_type": "SkySatCollect"
+                  }
+                },
+                {
+                  "path": "files/SkySatCollect/20190928_161510_ss01_u0003/all/20190928_161510_ss01_u0003_panchromatic_udm.tif",
+                  "media_type": "image/tiff",
+                  "size": 3497301,
+                  "digests": {
+                    "md5": "32143adf0c7813928d36e441bd02501f",
+                    "sha256": "9f79574845664f0195001994e09ef752e67df5fd08aba0a2bd2f9e44080c36ab"
+                  },
+                  "annotations": {
+                    "planet/asset_type": "ortho_panchromatic_udm",
+                    "planet/bundle_type": "all",
+                    "planet/item_id": "20190928_161510_ss01_u0003",
+                    "planet/item_type": "SkySatCollect"
+                  }
+                },
+                {
+                  "path": "files/SkySatCollect/20190928_161510_ss01_u0003/all/20190928_161510_ss01_u0003_pansharpened.tif",
+                  "media_type": "image/tiff",
+                  "size": 3615824107,
+                  "digests": {
+                    "md5": "f67020254ede32b1a62c52015186eabc",
+                    "sha256": "c8b14799baabdb57b28bfc2188df18ebdc54529697bcd2f53327d2e4dbc53375"
+                  },
+                  "annotations": {
+                    "planet/asset_type": "ortho_pansharpened",
+                    "planet/bundle_type": "all",
+                    "planet/item_id": "20190928_161510_ss01_u0003",
+                    "planet/item_type": "SkySatCollect"
+                  }
+                },
+                {
+                  "path": "files/SkySatCollect/20190928_161510_ss01_u0003/all/20190928_161510_ss01_u0003_pansharpened_udm.tif",
+                  "media_type": "image/tiff",
+                  "size": 3470551,
+                  "digests": {
+                    "md5": "d296babcb3f26c3f97617f949c3b3ab8",
+                    "sha256": "cb8f0f19d48f0aef92d0be3f4424338fc3122c4194d5e43d318bc007f9939392"
+                  },
+                  "annotations": {
+                    "planet/asset_type": "ortho_pansharpened_udm",
+                    "planet/bundle_type": "all",
+                    "planet/item_id": "20190928_161510_ss01_u0003",
+                    "planet/item_type": "SkySatCollect"
+                  }
+                },
+                {
+                  "path": "files/SkySatCollect/20190928_161510_ss01_u0003/all/20190928_161510_ss01_u0003_visual.tif",
+                  "media_type": "image/tiff",
+                  "size": 816751251,
+                  "digests": {
+                    "md5": "e08b5f3ce3f72c7fd49c9516a8a1e292",
+                    "sha256": "85e3817c6e58a45893a06b13f1d5d7d4e82dedb9266828c6f8d84ded005a6c18"
+                  },
+                  "annotations": {
+                    "planet/asset_type": "ortho_visual",
+                    "planet/bundle_type": "all",
+                    "planet/item_id": "20190928_161510_ss01_u0003",
+                    "planet/item_type": "SkySatCollect"
+                  }
+                }
+              ]
+            }
+
+            ```
+          </script>
+        </section>
+
+        <section>
+          <h4>Translating Planet Metadata to STAC</h4>
+          <div class="container">
+            <div class="col">
+              Planet Metadata
+              <pre class="dense">
+    <code class="hljs" data-trim data-line-numbers>
+    {
+    "id": "1004515_3755807_2017-12-21_1003",
+    "type": "Feature",
+    "geometry": {
+    "coordinates": [
+    [
+    [
+    37.08068412556186,
+    36.196897942636234
+    ],
+    [
+    37.10136932148183,
+    36.27557769311144
+    ],
+    [
+    37.132354200017566,
+    36.39139330067675
+    ],
+    [
+    37.13694614185042,
+    36.19783301055067
+    ],
+    [
+    37.08068412556186,
+    36.196897942636234
+    ]
+    ]
+    ],
+    "type": "Polygon"
+    },
+    "properties": {
+    "acquired": "2017-12-21T07:36:59.767307Z",
+    "anomalous_pixels": 0.04,
+    "black_fill": 0.92,
+    "cloud_cover": 0.038,
+    "columns": 8000,
+    "epsg_code": 32637,
+    "grid_cell": "3755807",
+    "ground_control": true,
+    "gsd": 3.9,
+    "item_type": "PSOrthoTile",
+    "origin_x": 307500,
+    "origin_y": 4032500,
+    "pixel_resolution": 3.125,
+    "provider": "planetscope",
+    "published": "2017-12-21T20:41:57.000Z",
+    "rows": 8000,
+    "satellite_id": "1003",
+    "strip_id": "1004515",
+    "sun_azimuth": 151.7,
+    "sun_elevation": 24.6,
+    "updated": "2017-12-22T00:51:24.000Z",
+    "usable_data": 0.05,
+    "view_angle": 1
+    }
+    }
+    </code>
+    </pre>
+            </div>
+
+            <div class="col">
+              STAC Output
+              <pre class="dense">
+    <code class="hljs" data-trim data-line-numbers>
+    {
+    "id": "1004515_3755807_2017-12-21_1003",
+    "type": "Feature",
+    "geometry": {
+    "coordinates": [
+    [
+    [
+    37.08068412556186,
+    36.196897942636234
+    ],
+    [
+    37.10136932148183,
+    36.27557769311144
+    ],
+    [
+    37.132354200017566,
+    36.39139330067675
+    ],
+    [
+    37.13694614185042,
+    36.19783301055067
+    ],
+    [
+    37.08068412556186,
+    36.196897942636234
+    ]
+    ]
+    ],
+    "type": "Polygon"
+    },
+    "properties": {
+    "acquired": "2017-12-21T07:36:59.767307Z",
+    "anomalous_pixels": 0.04,
+    "black_fill": 0.92,
+    "cloud_cover": 0.038,
+    "columns": 8000,
+    "epsg_code": 32637,
+    "grid_cell": "3755807",
+    "ground_control": true,
+    "gsd": 3.9,
+    "item_type": "PSOrthoTile",
+    "origin_x": 307500,
+    "origin_y": 4032500,
+    "pixel_resolution": 3.125,
+    "provider": "planetscope",
+    "published": "2017-12-21T20:41:57.000Z",
+    "rows": 8000,
+    "satellite_id": "1003",
+    "strip_id": "1004515",
+    "sun_azimuth": 151.7,
+    "sun_elevation": 24.6,
+    "updated": "2017-12-22T00:51:24.000Z",
+    "usable_data": 0.05,
+    "view_angle": 1
+    }
+    }
+    </code>
+    </pre>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Pretty Code</h2>
+          <pre class="dense">
+    <code class="hljs" data-trim data-line-numbers="4,8-11" >
+    import React, { useState } from 'react';
+
+    function Example() {
+    const [count, setCount] = useState(0);
+
+    return (
+    &lt;div&gt;
+    &lt;p&gt;You clicked {count} times&lt;/p&gt;
+    &lt;button onClick={() =&gt; setCount(count + 1)}&gt;
+    Click me
+    &lt;/button&gt;
+    &lt;/div&gt;
+    );
+    }
+    </code></pre>
+          <p>
+            Code syntax highlighting courtesy of
+            <a href="http://softwaremaniacs.org/soft/highlight/en/description/"
+              >highlight.js</a
+            >.
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <script src="js/reveal.js"></script>
+
+    <!-- TODO:
+    - Figure out how to configure highlight.js to use double space rather than
+    tab for indent: https://highlightjs.readthedocs.io/en/latest/api.html#configure-options
+    -->
+    <script>
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependencies
+      Reveal.initialize({
+        dependencies: [
+          { src: "plugin/markdown/marked.js" },
+          { src: "plugin/markdown/markdown.js" },
+          { src: "plugin/notes/notes.js", async: true },
+          { src: "vendor/highlight.js/highlight.pack.js", async: true },
+          {
+            src: "node_modules/reveal-code-focus/reveal-code-focus.js",
+            async: true,
+            callback: function() {
+              RevealCodeFocus();
+            }
+          }
+        ],
+
+        // Make URL represent active slide
+        hash: true,
+
+        // Disable animations on slide transitions
+        transition: "none",
+        backgroundTransition: "none",
+
+        width: "100%"
+        // height: "100%"
+      });
+    </script>
+  </body>
 </html>
