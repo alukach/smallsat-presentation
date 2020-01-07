@@ -69,73 +69,28 @@
           <p>Geographer -> Cloud Engineer ☁️🔧</p>
         </section>
 
-        <section>
-          <h2>General Workflow</h2>
-          <ol>
-            <li>Foo</li>
-            <li class="fragment">Bar</li>
-            <li class="fragment">Asdf</li>
-            <li class="fragment">qwert</li>
-          </ol>
+        <section class="padded" data-markdown>
+          <script type="text/markdown">
+            ## Workflow
 
-          <aside class="notes">
-            This slide has fragments which are also stepped through in the notes
-            window.
-          </aside>
+            1. Ingestion workflow is triggered on delivery of `manifest.json` file within our `inbox/:provider` folder.
+            1. Parse `manifest.json`, get list of all files to be delivered.
+            1. Poll for all files (with backoff)
+            1. Parse `metadata.json`, generate STAC item
+            1. Download thumbnail to our bucket, update STAC item
+            1. Copy assets to storage "folder", update STAC item
+            1. Submit STAC item to our STAC API
+          </script>
         </section>
 
         <section>
           <h2>Anatomy of a Planet Order</h2>
-        </section>
-
-        <section data-markdown>
-          <script type="text/template">
-            ### Dependencies
-
-            ```js
-            Reveal.initialize({
-              // Include other options…
-              dependencies: [
-                // Include other dependencies…
-                { src: 'path/to/highlight.js' },
-                {
-                  src: 'node_modules/reveal-code-focus/reveal-code-focus.js',
-                  async: true,
-                  callback: function() {
-                    RevealCodeFocus();
-                  }
-                }
-              ]
-            });
-            ```
-            <span class="fragment" data-code-focus="5">Note that the `highlight.js` file mentioned is not the [Reveal.js plugin](https://github.com/hakimel/reveal.js/blob/master/plugin/highlight/highlight.js), but the actual [`highlight.js` library](https://highlightjs.org/).</span>
-          </script>
-        </section>
-
-        <section data-state="yellow-slide" data-markdown>
-          <script type="text/template">
-            ### Styling
-
-            ```css
-            .line { display: block; }
-            .line.focus { background: yellow; }
-            /* include a highlight.js theme and modify it */
-            /* … */
-            /* on focused: switch to solarized light */
-            .line.focus { background: #fdf6e3; color: #657b83; }
-            .line.focus .hljs-comment, .line.focus .hljs-quote { color: #93a1a1; }
-            /* … */
-            ```
-            <span class="fragment current-only" data-code-focus="1">The most important style is to ensure that lines are set to `display: block`, so that different lines will not be rendered on the same line.</span>
-            <span class="fragment current-only" data-code-focus="2">To style your code you might first want to set a different background or text colour when highlighted.</span>
-            <span class="fragment current-only" data-code-focus="3-4">You can also use a specific theme by default…</span>
-            <span class="fragment current-only" data-code-focus="5-8">…then switch to a different one when lines are focused on.</span>
-          </script>
+          <em>TODO</em>
         </section>
 
         <section class="padded" data-markdown>
-          <script type="text/template">
-            #### Anatomy of a Planet delivery
+          <script type="text/markdown">
+            ## Anatomy of a Planet delivery
 
             ```text
             s3://my-ingestion-bucket
@@ -157,6 +112,7 @@
                   │  └─ 2
                   └─ 00402a81-0165-443d-ba02-3eda9f83a997
             ```
+
             <span class="fragment current-only" data-code-focus="1">Our bucket</span>
             <span class="fragment current-only" data-code-focus="2">`inbox/` prefix is where we'll watch for new `manifest.json` files</span>
             <span class="fragment current-only" data-code-focus="3">`planet/` prefix is for future-proofing for new providers</span>
@@ -171,7 +127,7 @@
         </section>
 
         <section class="padded" data-markdown>
-          <script type="text/template">
+          <script type="text/markdown">
             #### Example `manifest.json`
 
             ```
@@ -334,163 +290,454 @@
         </section>
 
         <section>
-          <h4>Translating Planet Metadata to STAC</h4>
+          <h4>
+            <code>metadata.json</code> + <code>manifest.json</code> = STAC Item
+          </h4>
           <div class="container">
             <div class="col">
-              Planet Metadata
+              <code>metadata.json</code>
               <pre class="dense">
-    <code class="hljs" data-trim data-line-numbers>
-    {
-    "id": "1004515_3755807_2017-12-21_1003",
-    "type": "Feature",
-    "geometry": {
-    "coordinates": [
-    [
-    [
-    37.08068412556186,
-    36.196897942636234
-    ],
-    [
-    37.10136932148183,
-    36.27557769311144
-    ],
-    [
-    37.132354200017566,
-    36.39139330067675
-    ],
-    [
-    37.13694614185042,
-    36.19783301055067
-    ],
-    [
-    37.08068412556186,
-    36.196897942636234
-    ]
-    ]
-    ],
-    "type": "Polygon"
-    },
-    "properties": {
-    "acquired": "2017-12-21T07:36:59.767307Z",
-    "anomalous_pixels": 0.04,
-    "black_fill": 0.92,
-    "cloud_cover": 0.038,
-    "columns": 8000,
-    "epsg_code": 32637,
-    "grid_cell": "3755807",
-    "ground_control": true,
-    "gsd": 3.9,
-    "item_type": "PSOrthoTile",
-    "origin_x": 307500,
-    "origin_y": 4032500,
-    "pixel_resolution": 3.125,
-    "provider": "planetscope",
-    "published": "2017-12-21T20:41:57.000Z",
-    "rows": 8000,
-    "satellite_id": "1003",
-    "strip_id": "1004515",
-    "sun_azimuth": 151.7,
-    "sun_elevation": 24.6,
-    "updated": "2017-12-22T00:51:24.000Z",
-    "usable_data": 0.05,
-    "view_angle": 1
-    }
-    }
-    </code>
-    </pre>
+								<code class="hljs" data-trim data-line-numbers>
+{
+	"id": "1004515_3755807_2017-12-21_1003",
+	"type": "Feature",
+	"geometry": {
+		"coordinates": [
+			[
+				[
+					37.08068412556186,
+					36.196897942636234
+				],
+				[
+					37.10136932148183,
+					36.27557769311144
+				],
+				[
+					37.132354200017566,
+					36.39139330067675
+				],
+				[
+					37.13694614185042,
+					36.19783301055067
+				],
+				[
+					37.08068412556186,
+					36.196897942636234
+				]
+			]
+		],
+		"type": "Polygon"
+	},
+	"properties": {
+		"acquired": "2017-12-21T07:36:59.767307Z",
+		"anomalous_pixels": 0.04,
+		"black_fill": 0.92,
+		"cloud_cover": 0.038,
+		"columns": 8000,
+		"epsg_code": 32637,
+		"grid_cell": "3755807",
+		"ground_control": true,
+		"gsd": 3.9,
+		"item_type": "PSOrthoTile",
+		"origin_x": 307500,
+		"origin_y": 4032500,
+		"pixel_resolution": 3.125,
+		"provider": "planetscope",
+		"published": "2017-12-21T20:41:57.000Z",
+		"rows": 8000,
+		"satellite_id": "1003",
+		"strip_id": "1004515",
+		"sun_azimuth": 151.7,
+		"sun_elevation": 24.6,
+		"updated": "2017-12-22T00:51:24.000Z",
+		"usable_data": 0.05,
+		"view_angle": 1
+	}
+}
+								</code>
+							</pre>
+            </div>
+
+            <div class="col">
+              <code>manifest.json</code> (reformatted into object representing
+              order bundle)
+              <pre class="dense">
+								<code class="hljs" data-trim data-line-numbers>
+{
+	"item_id": "1004515_3755807_2017-12-21_1003",
+	"item_type": "PSOrthoTile",
+	"assets": {
+		"json_metadata": {
+			"path": "files/PSOrthoTile/1004515_3755807_2017-12-21_1003/1004515_3755807_2017-12-21_1003_metadata.json",
+			"media_type": "application/json",
+			"size": 1144,
+			"digests": {
+				"md5": "5f76d57369dbfdfb323eeed76b68ad85",
+				"sha256": "cceaf96b98950c256c3484eba741c132aed70c0322e07d9341eeb766015ebd6f"
+			},
+			"annotations": {
+				"planet/item_id": "1004515_3755807_2017-12-21_1003",
+				"planet/item_type": "PSOrthoTile"
+			}
+		},
+		"basic_analytic": {
+			"path": "files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_1B_AnalyticMS.tif",
+			"media_type": "image/tiff",
+			"size": 101477936,
+			"digests": {
+				"md5": "d3ce78b99692829c7c1c6a57fe92eb5d",
+				"sha256": "4ca208cee9e4f59745e9723a210726f305eccc522f260172ef8da72c5f4f4e19"
+			},
+			"annotations": {
+				"planet/asset_type": "basic_analytic",
+				"planet/bundle_type": "all",
+				"planet/item_id": "1004515_3755807_2017-12-21_1003",
+				"planet/item_type": "PSOrthoTile"
+			}
+		},
+		"basic_analytic_dn": {
+			"path": "files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_1B_AnalyticMS_DN.tif",
+			"media_type": "image/tiff",
+			"size": 61534618,
+			"digests": {
+				"md5": "2b0f204c0ab450b5d9b2702e67880014",
+				"sha256": "8cf8a918014ccad1fa722204e67376e5b3d53a7c44f4de4539721ff8277ef523"
+			},
+			"annotations": {
+				"planet/asset_type": "basic_analytic_dn",
+				"planet/bundle_type": "all",
+				"planet/item_id": "1004515_3755807_2017-12-21_1003",
+				"planet/item_type": "PSOrthoTile"
+			}
+		},
+		"basic_analytic_dn_xml": {
+			"path": "files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_1B_AnalyticMS_DN_metadata.xml",
+			"media_type": "text/xml",
+			"size": 8911,
+			"digests": {
+				"md5": "173d5e644964a40e55371745078d7557",
+				"sha256": "d7f444d5e36a2f20c729e2b1672707305dfdc851b751a1cd63cc49de42dc3e0d"
+			},
+			"annotations": {
+				"planet/asset_type": "basic_analytic_dn_xml",
+				"planet/bundle_type": "all",
+				"planet/item_id": "1004515_3755807_2017-12-21_1003",
+				"planet/item_type": "PSOrthoTile"
+			}
+		},
+		"basic_udm": {
+			"path": "files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_1B_AnalyticMS_DN_udm.tif",
+			"media_type": "image/tiff",
+			"size": 422678,
+			"digests": {
+				"md5": "87ef5be6288b24e093e74d6aa5e735a4",
+				"sha256": "a6767f790c9f23af095ad4f7be4a68031d55a70df2091bd1c4ff4f00bc29a8cd"
+			},
+			"annotations": {
+				"planet/asset_type": "basic_udm",
+				"planet/bundle_type": "all",
+				"planet/item_id": "1004515_3755807_2017-12-21_1003",
+				"planet/item_type": "PSOrthoTile"
+			}
+		},
+		"basic_analytic_rpc": {
+			"path": "files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_1B_AnalyticMS_RPC.TXT",
+			"media_type": "text/plain",
+			"size": 3357,
+			"digests": {
+				"md5": "da6dad1174ca6e4b0ac836e1644df9f5",
+				"sha256": "e692b73436f8f20718d064826b9f4315f07a960300dba5f443c3dedfed657c5e"
+			},
+			"annotations": {
+				"planet/asset_type": "basic_analytic_rpc",
+				"planet/bundle_type": "all",
+				"planet/item_id": "1004515_3755807_2017-12-21_1003",
+				"planet/item_type": "PSOrthoTile"
+			}
+		},
+		"basic_analytic_xml": {
+			"path": "files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_1B_AnalyticMS_metadata.xml",
+			"media_type": "text/xml",
+			"size": 10264,
+			"digests": {
+				"md5": "c6a236fec4b6f3449b64b309bf2dada4",
+				"sha256": "222eb857db75f9de6b37566f6fb6442de39d76ce81edcc15746bed7b34c71d22"
+			},
+			"annotations": {
+				"planet/asset_type": "basic_analytic_xml",
+				"planet/bundle_type": "all",
+				"planet/item_id": "1004515_3755807_2017-12-21_1003",
+				"planet/item_type": "PSOrthoTile"
+			}
+		},
+		"analytic": {
+			"path": "files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_3B_AnalyticMS.tif",
+			"media_type": "image/tiff",
+			"size": 167354952,
+			"digests": {
+				"md5": "e934d9993282347eab6fddeca5c4f919",
+				"sha256": "aa9f2b888b40f0a2adf9123229101377d35acbd304b00fd8c3cfd2b723ea5d1b"
+			},
+			"annotations": {
+				"planet/asset_type": "analytic",
+				"planet/bundle_type": "all",
+				"planet/item_id": "1004515_3755807_2017-12-21_1003",
+				"planet/item_type": "PSOrthoTile"
+			}
+		},
+		"analytic_dn": {
+			"path": "files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_3B_AnalyticMS_DN.tif",
+			"media_type": "image/tiff",
+			"size": 95645466,
+			"digests": {
+				"md5": "d486d67fdfc669dbcfcbe08d380a8ac9",
+				"sha256": "374634b98bb97cc122b9c492d1161bf69e1bffba47023b04e268073980fcc29b"
+			},
+			"annotations": {
+				"planet/asset_type": "analytic_dn",
+				"planet/bundle_type": "all",
+				"planet/item_id": "1004515_3755807_2017-12-21_1003",
+				"planet/item_type": "PSOrthoTile"
+			}
+		},
+		"analytic_dn_xml": {
+			"path": "files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_3B_AnalyticMS_DN_metadata.xml",
+			"media_type": "text/xml",
+			"size": 9041,
+			"digests": {
+				"md5": "2e6f94893501e0b5d4d98c4b52ae87ad",
+				"sha256": "c33d7693291829dead2552dc7667b8de8715f4a0f07dfa69cd444fdfa2e4b984"
+			},
+			"annotations": {
+				"planet/asset_type": "analytic_dn_xml",
+				"planet/bundle_type": "all",
+				"planet/item_id": "1004515_3755807_2017-12-21_1003",
+				"planet/item_type": "PSOrthoTile"
+			}
+		},
+		"udm": {
+			"path": "files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_3B_AnalyticMS_DN_udm.tif",
+			"media_type": "image/tiff",
+			"size": 1062467,
+			"digests": {
+				"md5": "e89ce63e0740f9dafbdd7f59bcb96b0a",
+				"sha256": "735a26d8ce2596fee2691f3291555d1ce23c2f973234b4eee6b9f5a513d5a0ab"
+			},
+			"annotations": {
+				"planet/asset_type": "udm",
+				"planet/bundle_type": "all",
+				"planet/item_id": "1004515_3755807_2017-12-21_1003",
+				"planet/item_type": "PSOrthoTile"
+			}
+		},
+		"analytic_sr": {
+			"path": "files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_3B_AnalyticMS_SR.tif",
+			"media_type": "image/tiff",
+			"size": 143125176,
+			"digests": {
+				"md5": "8d61256d2a0833e6e6378697e645c40d",
+				"sha256": "273c07190d3d947f7f4da580fa9eff11133af4fa9a96842b66af66fd41edcfc4"
+			},
+			"annotations": {
+				"planet/asset_type": "analytic_sr",
+				"planet/bundle_type": "all",
+				"planet/item_id": "1004515_3755807_2017-12-21_1003",
+				"planet/item_type": "PSOrthoTile"
+			}
+		},
+		"analytic_xml": {
+			"path": "files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_3B_AnalyticMS_metadata.xml",
+			"media_type": "text/xml",
+			"size": 10394,
+			"digests": {
+				"md5": "4c16c0b5cec9b49b83eee180e8454846",
+				"sha256": "bd207bb312f42a2f9a47aba8c4aeafc86095a11b1b235d2e82e465c0f09b5481"
+			},
+			"annotations": {
+				"planet/asset_type": "analytic_xml",
+				"planet/bundle_type": "all",
+				"planet/item_id": "1004515_3755807_2017-12-21_1003",
+				"planet/item_type": "PSOrthoTile"
+			}
+		}
+	},
+	"bundle_type": "all"
+}
+								</code>
+							</pre>
             </div>
 
             <div class="col">
               STAC Output
               <pre class="dense">
-    <code class="hljs" data-trim data-line-numbers>
-    {
-    "id": "1004515_3755807_2017-12-21_1003",
-    "type": "Feature",
-    "geometry": {
-    "coordinates": [
-    [
-    [
-    37.08068412556186,
-    36.196897942636234
-    ],
-    [
-    37.10136932148183,
-    36.27557769311144
-    ],
-    [
-    37.132354200017566,
-    36.39139330067675
-    ],
-    [
-    37.13694614185042,
-    36.19783301055067
-    ],
-    [
-    37.08068412556186,
-    36.196897942636234
-    ]
-    ]
-    ],
-    "type": "Polygon"
-    },
-    "properties": {
-    "acquired": "2017-12-21T07:36:59.767307Z",
-    "anomalous_pixels": 0.04,
-    "black_fill": 0.92,
-    "cloud_cover": 0.038,
-    "columns": 8000,
-    "epsg_code": 32637,
-    "grid_cell": "3755807",
-    "ground_control": true,
-    "gsd": 3.9,
-    "item_type": "PSOrthoTile",
-    "origin_x": 307500,
-    "origin_y": 4032500,
-    "pixel_resolution": 3.125,
-    "provider": "planetscope",
-    "published": "2017-12-21T20:41:57.000Z",
-    "rows": 8000,
-    "satellite_id": "1003",
-    "strip_id": "1004515",
-    "sun_azimuth": 151.7,
-    "sun_elevation": 24.6,
-    "updated": "2017-12-22T00:51:24.000Z",
-    "usable_data": 0.05,
-    "view_angle": 1
-    }
-    }
-    </code>
-    </pre>
+								<code class="hljs" data-trim data-line-numbers>
+{
+	"id": "PSOrthoTile-1004515_3755807_2017-12-21_1003",
+	"type": "Feature",
+	"geometry": {
+		"coordinates": [
+			[
+				[
+					37.08068412556186,
+					36.196897942636234
+				],
+				[
+					37.10136932148183,
+					36.27557769311144
+				],
+				[
+					37.132354200017566,
+					36.39139330067675
+				],
+				[
+					37.13694614185042,
+					36.19783301055067
+				],
+				[
+					37.08068412556186,
+					36.196897942636234
+				]
+			]
+		],
+		"type": "Polygon"
+	},
+	"bbox": [
+		37.08068412556186,
+		36.196897942636234,
+		37.13694614185042,
+		36.196897942636234
+	],
+	"properties": {
+		"datetime": "2017-12-21T07:36:59.767307Z",
+		"eo:gsd": 3.9,
+		"eo:epsg": 32637,
+		"eo:cloud_cover": 3,
+		"eo:off_nadir": 1,
+		"eo:sun_azimuth": 151.7,
+		"eo:sun_elevation": 24.6,
+		"pl:anomalous_pixels": 0.04,
+		"pl:black_fill": 0.92,
+		"pl:columns": 8000,
+		"pl:grid_cell": "3755807",
+		"pl:ground_control": true,
+		"pl:item_type": "PSOrthoTile",
+		"pl:origin_x": 307500,
+		"pl:origin_y": 4032500,
+		"pl:pixel_resolution": 3.125,
+		"pl:provider": "planetscope",
+		"pl:published": "2017-12-21T20:41:57.000Z",
+		"pl:rows": 8000,
+		"pl:satellite_id": "1003",
+		"pl:strip_id": "1004515",
+		"pl:updated": "2017-12-22T00:51:24.000Z",
+		"pl:usable_data": 0.05,
+		"eo:bands": []
+	},
+	"links": [],
+	"assets": {
+		"thumbnail": {
+			"href": "https://tiles.planet.com/data/v1/item-types/PSOrthoTile/items/1004515_3755807_2017-12-21_1003/thumb",
+			"title": "Thumbnail",
+			"status": "active"
+		},
+		"json_metadata": {
+			"href": "s3://my_bucket/storage/files/PSOrthoTile/1004515_3755807_2017-12-21_1003/1004515_3755807_2017-12-21_1003_metadata.json",
+			"title": "json_metadata",
+			"type": "application/json",
+			"md5_digest": "5f76d57369dbfdfb323eeed76b68ad85",
+			"size": 1144
+		},
+		"basic_analytic": {
+			"href": "s3://my_bucket/storage/files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_1B_AnalyticMS.tif",
+			"title": "basic_analytic",
+			"type": "image/tiff",
+			"md5_digest": "d3ce78b99692829c7c1c6a57fe92eb5d",
+			"size": 101477936
+		},
+		"basic_analytic_dn": {
+			"href": "s3://my_bucket/storage/files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_1B_AnalyticMS_DN.tif",
+			"title": "basic_analytic_dn",
+			"type": "image/tiff",
+			"md5_digest": "2b0f204c0ab450b5d9b2702e67880014",
+			"size": 61534618
+		},
+		"basic_analytic_dn_xml": {
+			"href": "s3://my_bucket/storage/files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_1B_AnalyticMS_DN_metadata.xml",
+			"title": "basic_analytic_dn_xml",
+			"type": "text/xml",
+			"md5_digest": "173d5e644964a40e55371745078d7557",
+			"size": 8911
+		},
+		"basic_udm": {
+			"href": "s3://my_bucket/storage/files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_1B_AnalyticMS_DN_udm.tif",
+			"title": "basic_udm",
+			"type": "image/tiff",
+			"md5_digest": "87ef5be6288b24e093e74d6aa5e735a4",
+			"size": 422678
+		},
+		"basic_analytic_rpc": {
+			"href": "s3://my_bucket/storage/files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_1B_AnalyticMS_RPC.TXT",
+			"title": "basic_analytic_rpc",
+			"type": "text/plain",
+			"md5_digest": "da6dad1174ca6e4b0ac836e1644df9f5",
+			"size": 3357
+		},
+		"basic_analytic_xml": {
+			"href": "s3://my_bucket/storage/files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_1B_AnalyticMS_metadata.xml",
+			"title": "basic_analytic_xml",
+			"type": "text/xml",
+			"md5_digest": "c6a236fec4b6f3449b64b309bf2dada4",
+			"size": 10264
+		},
+		"analytic": {
+			"href": "s3://my_bucket/storage/files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_3B_AnalyticMS.tif",
+			"title": "analytic",
+			"type": "image/tiff",
+			"md5_digest": "e934d9993282347eab6fddeca5c4f919",
+			"size": 167354952
+		},
+		"analytic_dn": {
+			"href": "s3://my_bucket/storage/files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_3B_AnalyticMS_DN.tif",
+			"title": "analytic_dn",
+			"type": "image/tiff",
+			"md5_digest": "d486d67fdfc669dbcfcbe08d380a8ac9",
+			"size": 95645466
+		},
+		"analytic_dn_xml": {
+			"href": "s3://my_bucket/storage/files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_3B_AnalyticMS_DN_metadata.xml",
+			"title": "analytic_dn_xml",
+			"type": "text/xml",
+			"md5_digest": "2e6f94893501e0b5d4d98c4b52ae87ad",
+			"size": 9041
+		},
+		"udm": {
+			"href": "s3://my_bucket/storage/files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_3B_AnalyticMS_DN_udm.tif",
+			"title": "udm",
+			"type": "image/tiff",
+			"md5_digest": "e89ce63e0740f9dafbdd7f59bcb96b0a",
+			"size": 1062467
+		},
+		"analytic_sr": {
+			"href": "s3://my_bucket/storage/files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_3B_AnalyticMS_SR.tif",
+			"title": "analytic_sr",
+			"type": "image/tiff",
+			"md5_digest": "8d61256d2a0833e6e6378697e645c40d",
+			"size": 143125176
+		},
+		"analytic_xml": {
+			"href": "s3://my_bucket/storage/files/PSOrthoTile/1004515_3755807_2017-12-21_1003/all/1004515_3755807_2017-12-21_1003_3B_AnalyticMS_metadata.xml",
+			"title": "analytic_xml",
+			"type": "text/xml",
+			"md5_digest": "4c16c0b5cec9b49b83eee180e8454846",
+			"size": 10394
+		}
+	},
+	"collection": "planet"
+}
+								</code>
+							</pre>
             </div>
           </div>
-        </section>
-
-        <section>
-          <h2>Pretty Code</h2>
-          <pre class="dense">
-    <code class="hljs" data-trim data-line-numbers="4,8-11" >
-    import React, { useState } from 'react';
-
-    function Example() {
-    const [count, setCount] = useState(0);
-
-    return (
-    &lt;div&gt;
-    &lt;p&gt;You clicked {count} times&lt;/p&gt;
-    &lt;button onClick={() =&gt; setCount(count + 1)}&gt;
-    Click me
-    &lt;/button&gt;
-    &lt;/div&gt;
-    );
-    }
-    </code></pre>
-          <p>
-            Code syntax highlighting courtesy of
-            <a href="http://softwaremaniacs.org/soft/highlight/en/description/"
-              >highlight.js</a
-            >.
-          </p>
         </section>
       </div>
     </div>
