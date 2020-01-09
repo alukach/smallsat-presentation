@@ -1,3 +1,10 @@
+.past,
+.future {
+  /* Forcing offscreen slides to be hidden seems to help with selecting elements
+  and scrolling iframes */
+  display: none !important;
+}
+
 .container {
   display: flex;
 }
@@ -23,10 +30,15 @@ div.slides {
   align-items: center;
   justify-content: center;
 }
-section.padded {
+section {
   align-items: center;
-
-  width: 80% !important;
+  width: 100vw;
+}
+section.padded {
+  width: 80vw !important;
+}
+section section.padded {
+  margin-left: 10vw;
 }
 
 /* Make code example smaller */
